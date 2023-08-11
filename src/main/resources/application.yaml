@@ -9,4 +9,5 @@ spring:
       ddl-auto: update
     show-sql: true
   h2:
-    console-enabled: true
+    console:
+      enabled: true
