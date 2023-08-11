@@ -13,9 +13,9 @@ public interface EmployeeService {
 
     Optional<EmployeeDto> find(final UUID employeeId);
 
-    EmployeeDto create(final EmployeeDataDto employeeDto);
+    Optional<EmployeeDto> create(final EmployeeDataDto employeeDto);
 
     Optional<EmployeeDto> update(final UUID employeeId, final EmployeeDataDto employeeDto);
 
-    long delete(final UUID employeeId);
+    Optional<EmployeeDto> delete(final UUID employeeId);
 }

@@ -12,6 +12,7 @@ import company.employee.domain.Employee;
 import company.employee.dto.EmployeeDataDto;
 import company.employee.dto.EmployeeDto;
 import company.employee.repository.EmployeeRepository;
+import company.employee.service.EventPublisherService.EventType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    private final EmployeeRepository employeeRepository;
     private final ModelMapper mapper;
+    private final EmployeeRepository employeeRepository;
+    private final EventPublisherService eventPublisherService;
 
     @Override
     public Optional<EmployeeDto> find(final UUID employeeId) {
@@ -41,13 +43,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional
     @Override
-    public EmployeeDto create(final EmployeeDataDto employeeDataDto) {
+    public Optional<EmployeeDto> create(final EmployeeDataDto employeeDataDto) {
+        if (employeeRepository.findByEmail(employeeDataDto.getEmail()).isPresent()) {
+            log.info("can't create employee, email already exists: {}", employeeDataDto);
+            return Optional.empty();
+        }
         final Employee employee = mapper.map(employeeDataDto, Employee.class);
         employee.setEmployeeId(UUID.randomUUID());
 
         final Employee savedEmployee = employeeRepository.save(employee);
         final EmployeeDto savedEmployeeDto = mapper.map(savedEmployee, EmployeeDto.class);
-        return savedEmployeeDto;
+
+        eventPublisherService.publishEmployeeEvent(EventType.CREATED, savedEmployeeDto);
+        return Optional.of(savedEmployeeDto);
     }
 
     @Transactional
@@ -65,14 +73,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             Employee savedEmployee = employeeRepository.save(updatedEmployee);
             EmployeeDto updatedEmployeeDto = mapper.map(savedEmployee, EmployeeDto.class);
+            eventPublisherService.publishEmployeeEvent(EventType.UPDATED, updatedEmployeeDto);
             return Optional.of(updatedEmployeeDto);
         }
     }
 
     @Transactional
     @Override
-    public long delete(final UUID employeeId) {
-        return employeeRepository.deleteByEmployeeId(employeeId);
+    public Optional<EmployeeDto> delete(final UUID employeeId) {
+        Optional<EmployeeDto> employeeSearchResult = find(employeeId);
+        if (employeeSearchResult.isEmpty()) {
+            log.info("deleting a non-existent employee with id: {}", employeeId);
+            return Optional.empty();
+        } else {
+            employeeRepository.deleteByEmployeeId(employeeId);
+            EmployeeDto deletedEmployeeDto = employeeSearchResult.get();
+            eventPublisherService.publishEmployeeEvent(EventType.DELETED, deletedEmployeeDto);
+            return Optional.of(deletedEmployeeDto);
+        }
     }
 
 }

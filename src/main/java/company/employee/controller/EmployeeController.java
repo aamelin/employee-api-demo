@@ -1,11 +1,9 @@
 package company.employee.controller;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,10 +46,15 @@ public class EmployeeController {
     }
 
     @PostMapping
-    EmployeeDto createEmployee(@Valid @RequestBody final EmployeeDataDto employee) {
-        EmployeeDto createdEmployee = employeeService.create(employee);
-        log.info("created employee: {}", createdEmployee);
-        return createdEmployee;
+    ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody final EmployeeDataDto employee) {
+        Optional<EmployeeDto> createdEmployee = employeeService.create(employee);
+        if (createdEmployee.isEmpty()) {
+            log.info("error creating employee: {}", employee);
+            return ResponseEntity.badRequest().build();
+        } else {
+            log.info("created employee: {}", createdEmployee);
+            return ResponseEntity.ok(createdEmployee.get());
+        }
     }
 
     @PutMapping("/{id}")
@@ -68,17 +71,13 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Map<UUID, Long>> deleteEmployee(@PathVariable final UUID id) {
-        final long count = employeeService.delete(id);
-        HttpStatus status;
-        if (count == 1) {
-            status = HttpStatus.OK;
-        } else if (count == 0) {
-            status = HttpStatus.NOT_FOUND;
+    ResponseEntity<?> deleteEmployee(@PathVariable final UUID id) {
+        Optional<EmployeeDto> deletedEmployee = employeeService.delete(id);
+        if (deletedEmployee.isEmpty()) {
+            log.info("employee not found, id {}", id);
+            return ResponseEntity.notFound().build();
         } else {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.status(status)
-                .body(Map.of(id, count));
     }
 }

@@ -11,3 +11,10 @@ spring:
   h2:
     console:
       enabled: true
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+topics:
+  employee-events: "employee.topic"
