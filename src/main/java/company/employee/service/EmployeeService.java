@@ -1,15 +1,21 @@
 package company.employee.service;
 
-import company.employee.domain.Employee;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import company.employee.dto.EmployeeDataDto;
 import company.employee.dto.EmployeeDto;
 
 public interface EmployeeService {
 
-    Employee find(EmployeeDto employeeDto);
+    List<EmployeeDto> findAll();
 
-    Employee create(EmployeeDto employeeDto);
+    Optional<EmployeeDto> find(final UUID employeeId);
 
-    Employee update(EmployeeDto employeeDto);
+    EmployeeDto create(final EmployeeDataDto employeeDto);
 
-    Employee delete(EmployeeDto employeeDto);
+    Optional<EmployeeDto> update(final UUID employeeId, final EmployeeDataDto employeeDto);
+
+    long delete(final UUID employeeId);
 }
