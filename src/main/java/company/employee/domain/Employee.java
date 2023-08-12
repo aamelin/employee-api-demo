@@ -1,8 +1,11 @@
 package company.employee.domain;
 
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
+
+import org.hibernate.annotations.JdbcTypeCode;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,6 +34,7 @@ public class Employee {
     private Long id;
 
     @NotNull
+    @JdbcTypeCode(Types.VARCHAR)
     @Column(name = "external_id", unique = true)
     private UUID employeeId;
 

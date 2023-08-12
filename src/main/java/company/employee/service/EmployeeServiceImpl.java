@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final ModelMapper mapper;
@@ -41,7 +42,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public Optional<EmployeeDto> create(final EmployeeDataDto employeeDataDto) {
         if (employeeRepository.findByEmail(employeeDataDto.getEmail()).isPresent()) {
@@ -58,7 +58,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return Optional.of(savedEmployeeDto);
     }
 
-    @Transactional
     @Override
     public Optional<EmployeeDto> update(final UUID employeeId, final EmployeeDataDto employeeDataDto) {
         Optional<Employee> employee = employeeRepository.findByEmployeeId(employeeId);
@@ -78,7 +77,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
-    @Transactional
     @Override
     public Optional<EmployeeDto> delete(final UUID employeeId) {
         Optional<EmployeeDto> employeeSearchResult = find(employeeId);
@@ -92,5 +90,4 @@ public class EmployeeServiceImpl implements EmployeeService {
             return Optional.of(deletedEmployeeDto);
         }
     }
-
 }
