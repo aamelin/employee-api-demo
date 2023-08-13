@@ -3,7 +3,7 @@ spring:
     name: employee
   datasource:
     url: jdbc:mysql://localhost:3036/employees
-    username: user
+    username: root
     password: password
   jpa:
     hibernate:
@@ -17,3 +17,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
 topics:
   employee-events: "employee.topic"
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger
+    operationsSorter: method
