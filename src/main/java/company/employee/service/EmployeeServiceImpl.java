@@ -12,8 +12,9 @@ import company.employee.domain.Employee;
 import company.employee.dto.EmployeeDataDto;
 import company.employee.dto.EmployeeDto;
 import company.employee.repository.EmployeeRepository;
-import company.employee.service.EventPublisherService.EventType;
+import company.employee.util.EventPublisher;
 import company.employee.util.UuidSource;
+import company.employee.util.EventPublisher.EventType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final ModelMapper mapper;
     private final UuidSource uuidSource;
     private final EmployeeRepository employeeRepository;
-    private final EventPublisherService eventPublisherService;
+    private final EventPublisher eventPublisher;
 
     @Override
     public Optional<EmployeeDto> find(final UUID employeeId) {
@@ -56,7 +57,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         final Employee savedEmployee = employeeRepository.save(employee);
         final EmployeeDto savedEmployeeDto = mapper.map(savedEmployee, EmployeeDto.class);
 
-        eventPublisherService.publishEmployeeEvent(EventType.CREATED, savedEmployeeDto);
+        eventPublisher.publishEmployeeEvent(EventType.CREATED, savedEmployeeDto);
         return Optional.of(savedEmployeeDto);
     }
 
@@ -74,7 +75,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             Employee savedEmployee = employeeRepository.save(updatedEmployee);
             EmployeeDto updatedEmployeeDto = mapper.map(savedEmployee, EmployeeDto.class);
-            eventPublisherService.publishEmployeeEvent(EventType.UPDATED, updatedEmployeeDto);
+            eventPublisher.publishEmployeeEvent(EventType.UPDATED, updatedEmployeeDto);
             return Optional.of(updatedEmployeeDto);
         }
     }
@@ -88,7 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             employeeRepository.deleteByEmployeeId(employeeId);
             EmployeeDto deletedEmployeeDto = employeeSearchResult.get();
-            eventPublisherService.publishEmployeeEvent(EventType.DELETED, deletedEmployeeDto);
+            eventPublisher.publishEmployeeEvent(EventType.DELETED, deletedEmployeeDto);
             return Optional.of(deletedEmployeeDto);
         }
     }

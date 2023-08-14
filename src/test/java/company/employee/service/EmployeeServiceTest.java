@@ -25,9 +25,10 @@ import company.employee.domain.Employee;
 import company.employee.dto.EmployeeDataDto;
 import company.employee.dto.EmployeeDto;
 import company.employee.repository.EmployeeRepository;
-import company.employee.service.EventPublisherService.EventType;
 import company.employee.util.EmployeeDataGenerator;
+import company.employee.util.EventPublisher;
 import company.employee.util.UuidSource;
+import company.employee.util.EventPublisher.EventType;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
@@ -39,7 +40,7 @@ public class EmployeeServiceTest {
     private EmployeeRepository employeeRepository;
 
     @Mock
-    private EventPublisherService eventPublisherService;
+    private EventPublisher eventPublisher;
 
     @Mock
     private UuidSource uuidSource;
@@ -50,7 +51,7 @@ public class EmployeeServiceTest {
                 mapper,
                 uuidSource,
                 employeeRepository,
-                eventPublisherService);
+                eventPublisher);
     }
 
     @Test
@@ -129,7 +130,7 @@ public class EmployeeServiceTest {
         assertThat(result)
                 .isPresent()
                 .contains(expectedEmployee);
-        verify(eventPublisherService).publishEmployeeEvent(EventType.CREATED, expectedEmployee);
+        verify(eventPublisher).publishEmployeeEvent(EventType.CREATED, expectedEmployee);
     }
 
     @Test
@@ -176,7 +177,7 @@ public class EmployeeServiceTest {
         assertThat(result)
                 .isPresent()
                 .contains(updatedEmployeeDto);
-        verify(eventPublisherService).publishEmployeeEvent(EventType.UPDATED, updatedEmployeeDto);
+        verify(eventPublisher).publishEmployeeEvent(EventType.UPDATED, updatedEmployeeDto);
     }
 
     @Test
@@ -193,7 +194,7 @@ public class EmployeeServiceTest {
 
         // then
         assertThat(result).isEmpty();
-        verify(eventPublisherService, never()).publishEmployeeEvent(eq(EventType.UPDATED), any(EmployeeDto.class));
+        verify(eventPublisher, never()).publishEmployeeEvent(eq(EventType.UPDATED), any(EmployeeDto.class));
     }
 
     @Test
@@ -214,7 +215,7 @@ public class EmployeeServiceTest {
         assertThat(result)
                 .isPresent()
                 .contains(expectedEmployee);
-        verify(eventPublisherService).publishEmployeeEvent(EventType.DELETED, expectedEmployee);
+        verify(eventPublisher).publishEmployeeEvent(EventType.DELETED, expectedEmployee);
     }
 
     @Test
@@ -228,6 +229,6 @@ public class EmployeeServiceTest {
 
         // then
         assertThat(result).isEmpty();
-        verify(eventPublisherService, never()).publishEmployeeEvent(eq(EventType.DELETED), any(EmployeeDto.class));
+        verify(eventPublisher, never()).publishEmployeeEvent(eq(EventType.DELETED), any(EmployeeDto.class));
     }
 }
