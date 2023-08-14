@@ -12,14 +12,12 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import company.employee.domain.Employee;
 import company.employee.domain.Hobby;
 import company.employee.dto.EmployeeDataDto;
 
 public class ModelMapperTest {
-    @Autowired
     private ModelMapper mapper;
 
     @BeforeEach
@@ -81,7 +79,22 @@ public class ModelMapperTest {
     }
 
     @Test
-    void testMappingHobbiesLists() {
+    void testMappingHobbiesEmptySetToEmployeeEntity() {
+        EmployeeDataDto employeeDataDto = createEmployeeDataDto();
+        employeeDataDto.setHobbies(Set.of());
+        Employee employee = mapper.map(employeeDataDto, Employee.class);
+
+        assertThat(employee.getHobbies()).isEmpty();
+
+    }
+
+    @Test
+    void testMappingHobbiesEmptySetToEmployeeDataDto() {
+        Employee employee = createEmployee();
+        employee.setHobbies(Set.of());
+        EmployeeDataDto employeeDataDto = mapper.map(employee, EmployeeDataDto.class);
+
+        assertThat(employeeDataDto.getHobbies()).isEmpty();
 
     }
 
