@@ -23,3 +23,7 @@ springdoc:
   swagger-ui:
     path: /swagger
     operationsSorter: method
+app:
+  http:
+    api-key: "123456"
+    api-key-header: X-API-Key
