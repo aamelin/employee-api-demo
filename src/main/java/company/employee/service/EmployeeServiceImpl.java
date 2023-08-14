@@ -13,6 +13,7 @@ import company.employee.dto.EmployeeDataDto;
 import company.employee.dto.EmployeeDto;
 import company.employee.repository.EmployeeRepository;
 import company.employee.service.EventPublisherService.EventType;
+import company.employee.util.UuidSource;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final ModelMapper mapper;
+    private final UuidSource uuidSource;
     private final EmployeeRepository employeeRepository;
     private final EventPublisherService eventPublisherService;
 
@@ -49,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             return Optional.empty();
         }
         final Employee employee = mapper.map(employeeDataDto, Employee.class);
-        employee.setEmployeeId(UUID.randomUUID());
+        employee.setEmployeeId(uuidSource.randomUUID());
 
         final Employee savedEmployee = employeeRepository.save(employee);
         final EmployeeDto savedEmployeeDto = mapper.map(savedEmployee, EmployeeDto.class);
