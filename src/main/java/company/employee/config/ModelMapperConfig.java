@@ -12,7 +12,7 @@ import company.employee.dto.EmployeeDataDto;
 public class ModelMapperConfig {
 
     @Bean
-    ModelMapper modelMapper() {
+    public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setCollectionsMergeEnabled(false);
 
