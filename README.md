@@ -72,7 +72,7 @@ Response:
 Request:
 
 ```
-$ curl -X GET localhost:8080/employees/
+$ curl -X GET localhost:8080/employees/512a6753-026b-448c-857b-e79d86a9a486
 ```
 
 Response:
