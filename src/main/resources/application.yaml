@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: employee
+  datasource:
+    url: jdbc:mysql://localhost:3036/employees
+    username: root
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+topics:
+  employee-events: "employee.topic"
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger
+    operationsSorter: method
+app:
+  http:
+    api-key: "123456"
+    api-key-header: X-API-Key
