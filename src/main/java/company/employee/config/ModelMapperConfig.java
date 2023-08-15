@@ -23,7 +23,7 @@ public class ModelMapperConfig {
                     m.skip(Employee::setEmployeeId);
                 });
         mapper.typeMap(String.class, Hobby.class)
-                .setConverter(ctx -> new Hobby(null, ctx.getSource().toLowerCase()));
+                .setConverter(ctx -> new Hobby(null, ctx.getSource()));
 
         mapper.typeMap(Hobby.class, String.class)
                 .setConverter(ctx -> ctx.getSource().getHobby());
