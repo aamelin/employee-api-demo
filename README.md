@@ -160,7 +160,7 @@ Which will start the service together with the dependencies.
 
 ## Testing
 
-The project includes samples of unit and integration tests aimed to verify the completenes of functionality. The tests can be run with the following commands:
+The project includes samples of unit and integration tests aimed to verify the completeness of functionality. The tests can be run with the following commands:
 
 - unit tests
 
